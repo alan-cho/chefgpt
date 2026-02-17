@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field
 from langchain_anthropic import ChatAnthropic
 
-from lib.prompt import COOKWARE_PROMPT
+from lib.prompts import COOKWARE_PROMPT
 from schemas.app_state import AppState
 
 USER_COOKWARE = [
