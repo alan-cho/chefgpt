@@ -41,8 +41,9 @@ export function useChat({
                       thread_id: threadId,
                       resume: query,
                       stream: streaming,
+                      debug,
                   }
-                : { query, stream: streaming }
+                : { query, stream: streaming, debug }
 
             const res = await fetch('http://localhost:8000/query', {
                 method: 'POST',

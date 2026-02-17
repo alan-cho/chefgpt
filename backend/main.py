@@ -108,7 +108,7 @@ async def query(request: Query):
 
         return StreamingResponse(event_stream(), media_type="text/event-stream")
 
-    if not DEBUG:
+    if not request.debug:
         state = await graph.ainvoke(graph_input, config)
 
         graph_state = graph.get_state(config)

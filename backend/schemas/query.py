@@ -6,3 +6,4 @@ class Query(BaseModel):
     thread_id: str | None = None
     resume: str | None = None
     stream: bool = True
+    debug: bool = False
