@@ -52,7 +52,7 @@ export function ChatInput({
                 )}
                 <div
                     className={cn(
-                        'flex items-end gap-2 rounded-xl border border-input bg-input/30 px-3 py-2',
+                        'flex items-center gap-2 rounded-xl border border-input bg-input/30 px-3 py-2',
                         'focus-within:border-ring focus-within:ring-1 focus-within:ring-ring/30 transition-all'
                     )}
                 >
