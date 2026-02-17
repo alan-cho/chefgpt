@@ -1,6 +1,8 @@
 import json
 from dotenv import load_dotenv
 
+load_dotenv()
+
 from uuid import uuid4
 from fastapi import FastAPI
 
@@ -12,8 +14,6 @@ from lib.logging import serialize, DEBUG, get_logger
 from schemas.query import Query
 from graphs.graph import graph
 
-
-load_dotenv()
 logger = get_logger(__name__)
 
 app = FastAPI()

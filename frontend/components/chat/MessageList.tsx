@@ -29,15 +29,26 @@ export function MessageList({ messages, loading, debug }: MessageListProps) {
         )
     }
 
-    const lastIsUser = messages[messages.length - 1]?.role === 'user'
+    const lastMsg = messages[messages.length - 1]
+    const lastIsUser = lastMsg?.role === 'user'
+    // Empty assistant bubble = streaming started but no tokens yet; show typing indicator instead
+    const lastIsEmptyStream = lastMsg?.role === 'assistant' && !lastMsg.content && loading
+
+    const displayMessages = lastIsEmptyStream ? messages.slice(0, -1) : messages
+    const showTypingIndicator = loading && (lastIsUser || lastIsEmptyStream)
 
     return (
         <div className="flex-1 overflow-y-auto py-6 px-4">
             <div className="max-w-2xl mx-auto space-y-4">
-                {messages.map((msg, i) => (
-                    <ChatMessage key={i} message={msg} debug={debug} />
+                {displayMessages.map((msg, i) => (
+                    <ChatMessage
+                        key={i}
+                        message={msg}
+                        debug={debug}
+                        isStreaming={loading && i === displayMessages.length - 1 && msg.role === 'assistant'}
+                    />
                 ))}
-                {loading && lastIsUser && <TypingIndicator />}
+                {showTypingIndicator && <TypingIndicator />}
                 <div ref={bottomRef} />
             </div>
         </div>

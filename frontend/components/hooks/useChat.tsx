@@ -6,6 +6,7 @@ import type { SubmitEvent } from 'react'
 export interface Message {
     role: 'user' | 'assistant'
     content: string
+    error?: boolean
     debug?: { nodes: unknown[]; state: Record<string, unknown> }
 }
 
@@ -54,7 +55,10 @@ export function useChat({
                     ...prev,
                     { role: 'assistant', content: '' },
                 ])
-                if (!res.body) return
+                if (!res.body) {
+                    setLoading(false)
+                    return
+                }
 
                 const reader = res.body.getReader()
                 const decoder = new TextDecoder()
@@ -106,10 +110,17 @@ export function useChat({
             }
         } catch {
             setThreadId(null)
-            setMessages((prev) => [
-                ...prev,
-                { role: 'assistant', content: 'Failed to receive a response' },
-            ])
+            setMessages((prev) => {
+                // Strip any empty assistant bubble added at the start of streaming
+                const withoutEmpty =
+                    prev[prev.length - 1]?.role === 'assistant' && prev[prev.length - 1]?.content === ''
+                        ? prev.slice(0, -1)
+                        : prev
+                return [
+                    ...withoutEmpty,
+                    { role: 'assistant', content: 'Something went wrong. Please try again.', error: true },
+                ]
+            })
             setLoading(false)
         }
     }
