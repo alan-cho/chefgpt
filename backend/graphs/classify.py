@@ -11,7 +11,7 @@ class ClassificationResult(BaseModel):
     )
     query_intent: str | None = Field(
         default=None,
-        description="The intent of the query if cooking-related: 'recipe_request', 'what_can_i_make', or 'technique'.",
+        description="The intent of the query if cooking-related: 'recipe_request', 'what_can_i_make', or 'general'.",
     )
 
 

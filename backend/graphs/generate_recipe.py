@@ -1,7 +1,7 @@
 from langchain_anthropic import ChatAnthropic
 from langchain_core.messages import SystemMessage, HumanMessage
 
-from backend.schemas.app_state import AppState
+from schemas.app_state import AppState
 from tools.web_search import web_search
 from lib.prompts import build_recipe_system_prompt
 

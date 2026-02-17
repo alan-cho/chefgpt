@@ -8,7 +8,7 @@ Determine:
 2. If cooking-related, what the intent is:
    - "recipe_request": The user wants a specific recipe.
    - "what_can_i_make": The user wants to know what they can make with certain ingredients or cookware.
-   - "technique": The user is asking about a cooking technique, temperature, timing, or general cooking knowledge.
+   - "general": The user is asking about a cooking technique, temperature, timing, or general cooking knowledge.
 
 User query: {query}"""
 
