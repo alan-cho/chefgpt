@@ -1,8 +1,11 @@
 from pydantic import BaseModel, Field
 from langchain_anthropic import ChatAnthropic
 
+from lib.logging import get_logger
 from lib.prompts import CLASSIFY_PROMPT
 from schemas.app_state import AppState
+
+logger = get_logger(__name__)
 
 
 class ClassificationResult(BaseModel):
@@ -22,6 +25,11 @@ llm = ChatAnthropic(model="claude-sonnet-4-5-20250929").with_structured_output(
 
 def classify(state: AppState) -> AppState:
     result = llm.invoke(CLASSIFY_PROMPT.format(query=state["query"]))
+    logger.info(
+        "classification | cooking=%s intent=%s",
+        result.is_cooking_related,
+        result.query_intent,
+    )
     return {
         "is_cooking_related": result.is_cooking_related,
         "query_intent": result.query_intent,

@@ -6,6 +6,7 @@ import ReactMarkdown from 'react-markdown'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import type { Message } from '@/components/hooks/useChat'
+import { DebugPanel } from './DebugPanel'
 
 interface ChatMessageProps {
     message: Message
@@ -63,7 +64,7 @@ export function ChatMessage({ message, debug, isStreaming }: ChatMessageProps) {
             </div>
 
             {debug && message.debug && (
-                <div className="max-w-[85%] w-full">
+                <div className="w-full">
                     <Button
                         variant="ghost"
                         size="xs"
@@ -71,13 +72,9 @@ export function ChatMessage({ message, debug, isStreaming }: ChatMessageProps) {
                         onClick={() => setShowDebug((v) => !v)}
                     >
                         {showDebug ? <ChevronUp /> : <ChevronDown />}
-                        Debug
+                        Reasoning chain
                     </Button>
-                    {showDebug && (
-                        <pre className="mt-1 text-xs bg-muted rounded-lg p-3 overflow-x-auto text-muted-foreground">
-                            {JSON.stringify(message.debug, null, 2)}
-                        </pre>
-                    )}
+                    {showDebug && <DebugPanel data={message.debug as Parameters<typeof DebugPanel>[0]['data']} />}
                 </div>
             )}
         </div>

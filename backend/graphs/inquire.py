@@ -4,8 +4,11 @@ from pydantic import BaseModel, Field
 from langchain_anthropic import ChatAnthropic
 from langgraph.types import interrupt
 
+from lib.logging import get_logger
 from lib.prompts import INQUIRE_PROMPT
 from schemas.app_state import AppState
+
+logger = get_logger(__name__)
 
 
 class ClarifyingQuestion(BaseModel):
@@ -27,7 +30,10 @@ def inquire(state: AppState) -> AppState:
     result = llm.invoke(INQUIRE_PROMPT.format(query=state["query"]))
 
     if not result.needs_clarification:
+        logger.info("inquire | no clarification needed, proceeding")
         return {}
 
+    logger.info("inquire | asking clarification: %s", result.question)
     answer = interrupt(result.question)
+    logger.info("inquire | received answer: %s", answer)
     return {"user_preferences": answer}

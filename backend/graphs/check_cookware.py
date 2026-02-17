@@ -1,9 +1,12 @@
 from pydantic import BaseModel, Field
 from langchain_anthropic import ChatAnthropic
 
+from lib.logging import get_logger
 from lib.prompts import COOKWARE_PROMPT
 from lib.constants import USER_COOKWARE
 from schemas.app_state import AppState
+
+logger = get_logger(__name__)
 
 
 class CookwareRequirement(BaseModel):
@@ -26,6 +29,12 @@ def check_cookware(state: AppState) -> AppState:
     available = [item for item in required if item in available_set]
     missing = [item for item in required if item not in available_set]
 
+    logger.info(
+        "cookware check | required=%s available=%s missing=%s",
+        result.required_cookware,
+        available,
+        missing,
+    )
     return {
         "required_cookware": result.required_cookware,
         "available_cookware": available,
