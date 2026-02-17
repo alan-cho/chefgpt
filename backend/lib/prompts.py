@@ -1,5 +1,5 @@
-from graphs.check_cookware import USER_COOKWARE
 from schemas.app_state import AppState
+from lib.constants import USER_COOKWARE
 
 CLASSIFY_PROMPT = """Classify the following user query.
 
