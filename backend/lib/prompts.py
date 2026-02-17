@@ -15,3 +15,14 @@ COOKWARE_PROMPT = """Given the following cooking query, list the cookware items 
 Be specific but practical — only include items that are actually required, not optional garnish tools.
 
 User query: {query}"""
+
+CLASSIFY_PROMPT = """Classify the following user query.
+
+Determine:
+1. Whether it is related to cooking, recipes, food preparation, ingredients, or kitchen topics.
+2. If cooking-related, what the intent is:
+   - "recipe_request": The user wants a specific recipe.
+   - "what_can_i_make": The user wants to know what they can make with certain ingredients or cookware.
+   - "general": The user is asking about a cooking technique, temperature, timing, or general cooking knowledge.
+
+User query: {query}"""
