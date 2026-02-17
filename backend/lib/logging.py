@@ -7,7 +7,7 @@ from typing import Callable
 DEBUG = os.getenv("DEBUG", "false").lower() in ("true", "1", "yes")
 
 logging.basicConfig(
-    level=logging.DEBUG if DEBUG else logging.INFO,
+    level=logging.DEBUG if DEBUG else logging.WARNING,
     format="%(asctime)s %(name)s %(levelname)s %(message)s",
 )
 

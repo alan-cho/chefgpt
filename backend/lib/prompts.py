@@ -18,11 +18,11 @@ Be specific but practical — only include items that are actually required, not
 
 User query: {query}"""
 
-INQUIRE_PROMPT = """The user wants to know what they can make with certain ingredients. Decide whether you need to ask a clarifying question before generating a recipe.
+INQUIRE_PROMPT = """The user is asking a cooking question. Decide whether you need to ask a clarifying question before generating a recipe.
 
-If the query already contains enough detail — such as a cuisine preference, flavor profile, dietary restriction, or meal type — then set needs_clarification to False and skip the question.
+If the query already contains enough detail — such as a specific dish, cuisine preference, flavor profile, dietary restriction, or meal type — then set needs_clarification to False and skip the question.
 
-If the query is vague and lacks these details, set needs_clarification to True and ask ONE clarifying question about the most helpful missing detail:
+If the query is vague or ambiguous and lacks these details, set needs_clarification to True and ask ONE clarifying question about the most helpful missing detail:
 - Cuisine preference (Italian, Asian, Mexican, etc.)
 - Flavor profile (spicy, light, hearty, comfort food, etc.)
 - Dietary restrictions (vegetarian, gluten-free, low-carb, etc.)

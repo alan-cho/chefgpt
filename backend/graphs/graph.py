@@ -46,10 +46,8 @@ def route_after_classify(state: AppState) -> str:
         next_node = "respond_not_cooking"
     else:
         intent = state.get("query_intent")
-        if intent == "what_can_i_make":
+        if intent in ("what_can_i_make", "recipe_request"):
             next_node = "inquire"
-        elif intent == "recipe_request":
-            next_node = "check_cookware"
         else:
             next_node = "assistant"
     logger.info("[route] classify → %s", next_node)
