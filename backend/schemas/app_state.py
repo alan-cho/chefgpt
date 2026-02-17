@@ -13,4 +13,7 @@ class AppState(TypedDict):
     messages: Annotated[list[AnyMessage], add_messages]
 
     available_cookware: list[str]
+    required_cookware: list[str]
+    missing_cookware: list[str]
+
     response: str

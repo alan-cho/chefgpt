@@ -9,3 +9,9 @@ Always structure your response as a complete recipe with:
 Be specific in the instructions: include heat levels, timing, and visual/texture cues for doneness.
 
 If you need up-to-date information (specific recipes, temperatures, techniques), use the web_search tool."""
+
+COOKWARE_PROMPT = """Given the following cooking query, list the cookware items (pots, pans, utensils, appliances) that would be needed.
+
+Be specific but practical — only include items that are actually required, not optional garnish tools.
+
+User query: {query}"""
