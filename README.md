@@ -150,16 +150,6 @@ This separation is intentional. A node that classifies intent should never accid
 
 ---
 
-### Streaming via Server-Sent Events
-
-The `/query` endpoint uses FastAPI's `StreamingResponse` with `media_type="text/event-stream"` to push tokens to the frontend as they are generated. Streaming is filtered to `STREAMING_NODES = {"assistant", "generate_recipe"}` — the two nodes that produce user-visible text. Classification and cookware check outputs are internal and never streamed.
-
-**Why SSE over WebSockets?** SSE is unidirectional (server → client), which matches the streaming use case exactly. WebSockets are bidirectional and add unnecessary handshake complexity for what is effectively a request-response stream. SSE is also simpler to implement, works over standard HTTP/2, and requires no special client library.
-
-**Trade-off:** SSE connections are held open for the duration of a graph run. On Fargate, this means one connection per active user. The stateful streaming nature is one reason Lambda was ruled out — Lambda has a 15-minute execution limit and cold starts, both of which are problematic for streaming agents.
-
----
-
 ### Recipe Validation as a Dedicated Node
 
 The `validate_recipe` node sits between `generate_recipe` and the terminal state. It runs the generated recipe text through a structured-output LLM call that checks three things: safety (dangerous temperatures, harmful food combinations, allergen issues), structure (ingredients, instructions, and timing are all present), and hallucinations (implausibly large quantities or unrealistic temperatures).
