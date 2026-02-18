@@ -259,3 +259,7 @@ When `stream: true`, the endpoint returns `text/event-stream` with the following
 | `interrupt` | Assistant needs more info (`question` and `thread_id` fields) |
 | `response`  | Final complete response (`content` field)                     |
 | `done`      | Stream finished                                               |
+
+### AI Tools Used
+
+Claude Code
