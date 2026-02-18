@@ -213,6 +213,12 @@ Send a question to the assistant.
 | `stream`    | boolean | `true`   | Stream tokens via SSE                          |
 | `debug`     | boolean | `false`  | Return per-node graph trace                    |
 
+### Example Usage
+
+![ChefGPT screenshot](example/debug.png)
+
+![ChefGPT classification](example/classify.png)
+
 ### Example curl requests
 
 **Basic streaming request:**
