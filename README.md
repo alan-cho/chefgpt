@@ -23,11 +23,11 @@ SERPER_API_KEY=...             # Required — web search (serper.dev)
 DEBUG=false                    # Set to true to enable verbose backend logs
 ```
 
-| Variable | Description |
-|---|---|
+| Variable            | Description                                                                |
+| ------------------- | -------------------------------------------------------------------------- |
 | `ANTHROPIC_API_KEY` | Claude API key from [console.anthropic.com](https://console.anthropic.com) |
-| `SERPER_API_KEY` | Search API key from [serper.dev](https://serper.dev) |
-| `DEBUG` | `true` enables INFO-level logs; `false` (default) silences them |
+| `SERPER_API_KEY`    | Search API key from [serper.dev](https://serper.dev)                       |
+| `DEBUG`             | `true` enables INFO-level logs; `false` (default) silences them            |
 
 ## Running with Docker
 
@@ -74,13 +74,13 @@ Send a question to the assistant.
 
 **Request body:**
 
-| Field | Type | Default | Description |
-|---|---|---|---|
-| `query` | string | required | The user's question |
-| `thread_id` | string | `null` | Conversation thread ID (returned on interrupt) |
-| `resume` | string | `null` | Resume value after an interrupt |
-| `stream` | boolean | `true` | Stream tokens via SSE |
-| `debug` | boolean | `false` | Return per-node graph trace |
+| Field       | Type    | Default  | Description                                    |
+| ----------- | ------- | -------- | ---------------------------------------------- |
+| `query`     | string  | required | The user's question                            |
+| `thread_id` | string  | `null`   | Conversation thread ID (returned on interrupt) |
+| `resume`    | string  | `null`   | Resume value after an interrupt                |
+| `stream`    | boolean | `true`   | Stream tokens via SSE                          |
+| `debug`     | boolean | `false`  | Return per-node graph trace                    |
 
 ### Example curl requests
 
@@ -122,9 +122,9 @@ curl -X POST http://localhost:8000/query \
 
 When `stream: true`, the endpoint returns `text/event-stream` with the following event types:
 
-| `type` | Description |
-|---|---|
-| `token` | Partial text chunk (`content` field) |
+| `type`      | Description                                                   |
+| ----------- | ------------------------------------------------------------- |
+| `token`     | Partial text chunk (`content` field)                          |
 | `interrupt` | Assistant needs more info (`question` and `thread_id` fields) |
-| `response` | Final complete response (`content` field) |
-| `done` | Stream finished |
+| `response`  | Final complete response (`content` field)                     |
+| `done`      | Stream finished                                               |
