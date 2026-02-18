@@ -135,7 +135,8 @@ async def query(request: Query):
     async for chunk in graph.astream(graph_input, config, stream_mode="updates"):
         for node_name, delta in chunk.items():
             nodes.append({"node": node_name, "delta": serialize(delta)})
-            final_state.update(delta)
+            if delta is not None:
+                final_state.update(delta)
 
     graph_state = graph.get_state(config)
     interrupt_question = _has_interrupt(graph_state)
