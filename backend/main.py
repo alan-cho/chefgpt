@@ -1,8 +1,6 @@
 import json
+
 from dotenv import load_dotenv
-
-load_dotenv()
-
 from uuid import uuid4
 from fastapi import FastAPI
 
@@ -10,9 +8,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from langgraph.types import Command
 
-from lib.logging import serialize, DEBUG, get_logger
+from lib.logging import serialize, get_logger
 from schemas.query import Query
 from graphs.graph import graph
+
+load_dotenv()
 
 logger = get_logger(__name__)
 
