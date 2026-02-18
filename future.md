@@ -128,6 +128,50 @@ Cache invalidation trigger: a time-based TTL (e.g. 24h) is sufficient for recipe
 
 ---
 
+## Edge Cases
+
+The following edge cases are currently unhandled and would need to be addressed before a production deployment.
+
+### Empty / Whitespace-only Queries
+
+**Current state:** The API accepts a blank or whitespace-only `query` string. The graph will invoke the full classify → route pipeline for an empty input, wasting LLM calls and producing a confusing response.
+
+**Improvement:** Add a `@validator` (or `model_validator`) to the `Query` schema that strips whitespace and raises a 422 if the result is empty. Alternatively, check at the `classify` node and return a short error message without routing further.
+
+---
+
+### Very Long Tool Output
+
+**Current state:** `web_search` can return thousands of characters. There is no truncation before the result is injected into the LLM's context window, which can silently consume a large portion of the context budget and inflate latency.
+
+**Improvement:** Truncate the `web_search` return value to a maximum of ~2000 characters (or N tokens) before returning it to the LLM. Log a warning when truncation occurs. A smarter approach would extract the most relevant passages rather than cutting blindly.
+
+---
+
+### Concurrent Requests on the Same `thread_id`
+
+**Current state:** `InMemorySaver` has no locking. If two requests arrive simultaneously with the same `thread_id`, both could read the same state snapshot and write conflicting updates, producing undefined behaviour.
+
+**Improvement:** Add an in-process lock keyed on `thread_id` (e.g. `asyncio.Lock` per thread), or switch to a persistent checkpointer (PostgreSQL, Redis) that provides row-level locking natively. At minimum, document that the API does not support concurrent requests on the same thread.
+
+---
+
+### Resume on an Already-Completed Thread
+
+**Current state:** Posting a `resume` payload to a `thread_id` that has already completed (i.e. not waiting at an `interrupt`) will either error silently or re-run the graph from an unexpected state.
+
+**Improvement:** Before resuming, check whether the thread's checkpoint is in a suspended (interrupted) state. If it is not, return a 409 Conflict with a clear message rather than proceeding. This requires inspecting the checkpointer before invoking `graph.ainvoke`.
+
+---
+
+### Stale Streaming Connection
+
+**Current state:** If the client disconnects mid-stream (e.g. closes the browser tab), the graph run continues to completion in the background, consuming LLM tokens with no recipient.
+
+**Improvement:** Use FastAPI's `Request.is_disconnected()` check inside the streaming generator. If the client has disconnected, break out of the stream loop early. This requires passing the `Request` object into the generator and polling it periodically during the event loop.
+
+---
+
 ## Prompt Versioning
 
 **Current state:** Prompts are plain strings in `lib/prompts.py` with no history, no evaluation, and no way to roll back a regression.
