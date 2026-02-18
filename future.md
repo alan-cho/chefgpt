@@ -142,27 +142,6 @@ This validation node would sit between `generate_recipe` and the final `response
 
 ---
 
-## CI Pipeline
-
-**Current state:** No automated checks run on pull requests or pushes.
-
-**Improvement:** Add a GitHub Actions workflow that runs on every push and PR to `main`:
-
-```
-lint (ruff/eslint) → typecheck (mypy/tsc) → unit tests (pytest/jest) → build
-```
-
-Steps:
-1. **Lint:** `ruff check` for backend, `eslint` for frontend
-2. **Type check:** `mypy` for backend, `tsc --noEmit` for frontend
-3. **Unit tests:** `pytest backend/` with mocked LLM calls (no real API keys needed)
-4. **Docker build:** `docker compose build` to catch Dockerfile regressions
-5. **Optional:** LangSmith dataset eval on a representative set of queries to catch prompt regressions
-
-Block merges if any step fails. Use repository secrets for any API keys needed in integration tests.
-
----
-
 ## Prompt Versioning
 
 **Current state:** Prompts are plain strings in `lib/prompts.py` with no history, no evaluation, and no way to roll back a regression.

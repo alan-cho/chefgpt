@@ -66,6 +66,15 @@ npm run dev
 - Frontend: http://localhost:3000
 - Backend API: http://localhost:8000
 
+## CI
+
+GitHub Actions runs on every push and pull request to `main`:
+
+- **Backend:** `ruff check` → `pytest` (no API keys required)
+- **Frontend:** `eslint` → `next build` (includes TypeScript check)
+
+See [`.github/workflows/ci.yml`](.github/workflows/ci.yml).
+
 ## Running Tests
 
 ```bash
