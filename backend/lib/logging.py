@@ -1,3 +1,4 @@
+import inspect
 import logging
 import os
 from functools import wraps
@@ -22,27 +23,40 @@ _graph_logger = get_logger("graph")
 def log_node(name: str) -> Callable:
     """Wrap a graph node with entry/exit logging and automatic tool call detection."""
 
+    def _log_result(result):
+        if result:
+            msgs = result.get("messages", [])
+            if msgs:
+                last = msgs[-1]
+                if hasattr(last, "tool_calls") and last.tool_calls:
+                    for tc in last.tool_calls:
+                        _graph_logger.info(
+                            "[tool_call] %s | args=%s",
+                            tc["name"],
+                            tc.get("args", {}),
+                        )
+            _graph_logger.info(
+                "[node:%s] exiting | keys=%s", name, list(result.keys())
+            )
+        else:
+            _graph_logger.info("[node:%s] exiting | no state changes", name)
+
     def decorator(fn: Callable) -> Callable:
+        if inspect.iscoroutinefunction(fn):
+            @wraps(fn)
+            async def async_wrapper(state):
+                _graph_logger.info("[node:%s] entering", name)
+                result = await fn(state)
+                _log_result(result)
+                return result
+
+            return async_wrapper
+
         @wraps(fn)
         def wrapper(state):
             _graph_logger.info("[node:%s] entering", name)
             result = fn(state)
-            if result:
-                msgs = result.get("messages", [])
-                if msgs:
-                    last = msgs[-1]
-                    if hasattr(last, "tool_calls") and last.tool_calls:
-                        for tc in last.tool_calls:
-                            _graph_logger.info(
-                                "[tool_call] %s | args=%s",
-                                tc["name"],
-                                tc.get("args", {}),
-                            )
-                _graph_logger.info(
-                    "[node:%s] exiting | keys=%s", name, list(result.keys())
-                )
-            else:
-                _graph_logger.info("[node:%s] exiting | no state changes", name)
+            _log_result(result)
             return result
 
         return wrapper

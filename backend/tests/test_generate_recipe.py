@@ -1,6 +1,5 @@
 from unittest.mock import AsyncMock
 
-import pytest
 from langchain_core.messages import AIMessage, SystemMessage, HumanMessage
 
 from graphs.generate_recipe import generate_recipe

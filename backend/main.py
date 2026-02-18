@@ -130,15 +130,15 @@ async def query(request: Query):
         }
 
     nodes = []
-    final_state = {}
 
     async for chunk in graph.astream(graph_input, config, stream_mode="updates"):
         for node_name, delta in chunk.items():
             if delta is not None:
                 nodes.append({"node": node_name, "delta": serialize(delta)})
-                final_state.update(delta)
 
     graph_state = graph.get_state(config)
+    final_state = dict(graph_state.values)
+
     interrupt_question = _has_interrupt(graph_state)
     if interrupt_question:
         return {
