@@ -117,7 +117,7 @@ function extractSummary(node: string, delta: Record<string, unknown>): string[] 
 function NodeStepCard({ step, index }: { step: NodeStep; index: number }) {
     const [expanded, setExpanded] = useState(false)
     const meta = NODE_META[step.node] ?? FALLBACK_META
-    const summary = extractSummary(step.node, step.delta)
+    const summary = step.delta ? extractSummary(step.node, step.delta) : []
 
     return (
         <div className="flex gap-2.5">

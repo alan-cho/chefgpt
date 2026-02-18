@@ -12,7 +12,7 @@ tools = [web_search]
 llm = ChatAnthropic(model="claude-sonnet-4-5-20250929").bind_tools(tools)
 
 
-def generate_recipe(state: AppState) -> AppState:
+async def generate_recipe(state: AppState) -> AppState:
     if not state.get("messages"):
         system_prompt = build_recipe_system_prompt(state)
         messages = [
@@ -22,7 +22,7 @@ def generate_recipe(state: AppState) -> AppState:
     else:
         messages = state["messages"]
 
-    response = llm.invoke(messages)
+    response = await llm.ainvoke(messages)
     if response.tool_calls:
         for tc in response.tool_calls:
             logger.info("[tool_call] %s | args=%s", tc["name"], tc.get("args", {}))

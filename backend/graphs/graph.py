@@ -21,7 +21,7 @@ tools = [web_search]
 llm = ChatAnthropic(model="claude-sonnet-4-5-20250929").bind_tools(tools)
 
 
-def assistant(state: AppState) -> AppState:
+async def assistant(state: AppState) -> AppState:
     if not state.get("messages"):
         messages = [
             SystemMessage(content=ASSISTANT_SYSTEM_PROMPT),
@@ -30,7 +30,7 @@ def assistant(state: AppState) -> AppState:
     else:
         messages = state["messages"]
 
-    response = llm.invoke(messages)
+    response = await llm.ainvoke(messages)
     if response.tool_calls:
         for tc in response.tool_calls:
             logger.info("[tool_call] %s | args=%s", tc["name"], tc.get("args", {}))
