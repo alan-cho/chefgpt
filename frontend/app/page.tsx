@@ -28,20 +28,26 @@ export default function Home() {
                     <Button
                         variant="ghost"
                         size="icon-sm"
+                        disabled={debug}
                         onClick={() => setStream((s) => !s)}
-                        title={stream ? 'Streaming on' : 'Streaming off'}
+                        title={debug ? 'Streaming unavailable in debug mode' : stream ? 'Streaming on' : 'Streaming off'}
                         className={cn(
-                            stream
+                            !debug && stream
                                 ? 'bg-amber-500/15 text-amber-400 hover:bg-amber-500/25 hover:text-amber-300'
-                                : 'text-muted-foreground',
+                                : 'text-muted-foreground opacity-40',
                         )}
                     >
-                        <Zap className={cn('size-4', stream && 'fill-current')} />
+                        <Zap className={cn('size-4', !debug && stream && 'fill-current')} />
                     </Button>
                     <Button
                         variant="ghost"
                         size="icon-sm"
-                        onClick={() => setDebug((d) => !d)}
+                        onClick={() => {
+                            setDebug((d) => {
+                                if (!d) setStream(false)
+                                return !d
+                            })
+                        }}
                         title={debug ? 'Debug on' : 'Debug off'}
                         className={cn(
                             debug
