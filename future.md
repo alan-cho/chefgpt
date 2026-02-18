@@ -142,22 +142,6 @@ This validation node would sit between `generate_recipe` and the final `response
 
 ---
 
-## Unit Tests for Nodes
-
-**Current state:** No automated tests exist for any of the graph nodes.
-
-**Improvement:** Write unit tests for each node in `graphs/`, testing inputs and outputs in isolation without invoking the full LLM:
-
-- **Classify:** mock the LLM response and assert `is_cooking_related` and `query_intent` are set correctly
-- **Inquire:** test both the `needs_clarification=True` (interrupt) and `False` (pass-through) branches
-- **Check cookware:** assert `available_cookware` and `missing_cookware` are populated correctly given a mocked query
-- **Generate recipe:** assert the response is structured correctly (contains ingredients and instructions)
-- **Router functions:** pure functions — test all branching conditions directly without any mocking
-
-Use `pytest` with `unittest.mock.patch` to mock `llm.invoke` and `llm.ainvoke`. LangGraph also supports [graph testing utilities](https://langchain-ai.github.io/langgraph/concepts/testing/) for end-to-end subgraph tests.
-
----
-
 ## CI Pipeline
 
 **Current state:** No automated checks run on pull requests or pushes.

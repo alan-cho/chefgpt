@@ -66,6 +66,16 @@ npm run dev
 - Frontend: http://localhost:3000
 - Backend API: http://localhost:8000
 
+## Running Tests
+
+```bash
+cd backend
+pip install pytest pytest-mock
+pytest -v
+```
+
+No API keys are required — all LLM calls are mocked.
+
 ## API
 
 ### `POST /query`
