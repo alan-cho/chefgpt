@@ -1,18 +1,19 @@
 import json
 
 from dotenv import load_dotenv
-from uuid import uuid4
-from fastapi import FastAPI
-
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
-from langgraph.types import Command
-
-from lib.logging import serialize, get_logger
-from schemas.query import Query
-from graphs.graph import graph
 
 load_dotenv()
+
+from uuid import uuid4  # noqa: E402
+from fastapi import FastAPI  # noqa: E402
+
+from fastapi.middleware.cors import CORSMiddleware  # noqa: E402
+from fastapi.responses import StreamingResponse  # noqa: E402
+from langgraph.types import Command  # noqa: E402
+
+from lib.logging import serialize, get_logger  # noqa: E402
+from schemas.query import Query  # noqa: E402
+from graphs.graph import graph  # noqa: E402
 
 logger = get_logger(__name__)
 

@@ -13,7 +13,7 @@ Copy the sample env files and fill in your API keys:
 
 ```bash
 cp backend/.env.sample backend/.env
-cp frontend/.env.local.example frontend/.env.local
+cp frontend/.env.sample frontend/.env
 ```
 
 Then edit `backend/.env`:
@@ -32,7 +32,7 @@ DEBUG=false                    # Set to true to enable verbose backend logs
 | `SERPER_API_KEY`    | Search API key from [serper.dev](https://serper.dev)                       |
 | `DEBUG`             | `true` enables INFO-level logs; `false` (default) silences them            |
 
-**Frontend variables (`frontend/.env.local`):**
+**Frontend variables (`frontend/.env`):**
 
 | Variable              | Description                                    |
 | --------------------- | ---------------------------------------------- |
