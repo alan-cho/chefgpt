@@ -9,6 +9,7 @@ from graphs.check_cookware import check_cookware
 from graphs.generate_recipe import generate_recipe
 from graphs.generate_recipe import tools as recipe_tools
 from graphs.inquire import inquire
+from graphs.validate_recipe import validate_recipe
 from lib.logging import get_logger, log_node
 from lib.prompts import ASSISTANT_SYSTEM_PROMPT, NOT_COOKING_RESPONSE
 from schemas.app_state import AppState
@@ -63,7 +64,7 @@ def route_after_assistant(state: AppState) -> str:
 
 def route_after_generate_recipe(state: AppState) -> str:
     last_message = state["messages"][-1]
-    next_node = "tools" if last_message.tool_calls else END
+    next_node = "tools" if last_message.tool_calls else "validate_recipe"
     logger.info("[route] generate_recipe → %s", next_node)
     return next_node
 
@@ -88,6 +89,7 @@ builder.add_node("assistant", log_node("assistant")(assistant))
 builder.add_node("inquire", log_node("inquire")(inquire))
 builder.add_node("check_cookware", log_node("check_cookware")(check_cookware))
 builder.add_node("generate_recipe", log_node("generate_recipe")(generate_recipe))
+builder.add_node("validate_recipe", log_node("validate_recipe")(validate_recipe))
 builder.add_node(
     "respond_not_cooking", log_node("respond_not_cooking")(respond_not_cooking)
 )
@@ -99,6 +101,7 @@ builder.add_conditional_edges("assistant", route_after_assistant)
 builder.add_edge("inquire", "check_cookware")
 builder.add_edge("check_cookware", "generate_recipe")
 builder.add_conditional_edges("generate_recipe", route_after_generate_recipe)
+builder.add_edge("validate_recipe", END)
 builder.add_conditional_edges("tools", route_after_tools)
 builder.add_edge("respond_not_cooking", END)
 

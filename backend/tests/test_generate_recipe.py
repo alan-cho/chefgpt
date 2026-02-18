@@ -46,7 +46,11 @@ def test_existing_messages_passed_through(mocker):
 
 
 def test_response_with_tool_calls(mocker):
-    tool_call = {"name": "web_search", "args": {"query": "carbonara recipe"}, "id": "tc1"}
+    tool_call = {
+        "name": "web_search",
+        "args": {"query": "carbonara recipe"},
+        "id": "tc1",
+    }
     mock_response = AIMessage(content="", tool_calls=[tool_call])
     mock_llm = mocker.MagicMock()
     mock_llm.invoke.return_value = mock_response

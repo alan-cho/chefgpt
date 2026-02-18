@@ -128,20 +128,6 @@ Cache invalidation trigger: a time-based TTL (e.g. 24h) is sufficient for recipe
 
 ---
 
-## Recipe Quality Validation
-
-**Current state:** Generated recipes are returned to the user as-is. There is no check that the output is safe, coherent, or culinarily sound.
-
-**Improvement:** Add a lightweight validation pass after `generate_recipe`:
-
-- **Safety check:** run the output through a classifier (Claude itself works well here with a simple prompt) to flag anything potentially harmful — dangerous food combinations, unsafe cooking temperatures, allergen-related issues
-- **Structure check:** verify the response contains the expected sections (ingredients, instructions, timing) before returning; re-generate or prompt the user if missing
-- **Hallucination heuristics:** flag implausibly large quantities or temperatures outside realistic ranges
-
-This validation node would sit between `generate_recipe` and the final `response`, and could log flagged outputs to a moderation queue for human review.
-
----
-
 ## Prompt Versioning
 
 **Current state:** Prompts are plain strings in `lib/prompts.py` with no history, no evaluation, and no way to roll back a regression.

@@ -55,6 +55,17 @@ Be specific in the instructions: include heat levels, timing, and visual/texture
 If you need up-to-date information (specific recipes, temperatures, techniques), use the web_search tool."""
 
 
+VALIDATE_RECIPE_PROMPT = """Evaluate the following generated recipe response for safety and quality.
+
+Check for:
+1. **Safety:** dangerous food combinations, unsafe cooking temperatures (e.g. undercooked poultry below 165°F/74°C), or allergen issues that could cause harm
+2. **Structure:** the response includes an ingredients list, step-by-step instructions, and timing information
+3. **Hallucinations:** implausibly large quantities (e.g. "10kg of salt") or temperatures outside realistic cooking ranges
+
+Recipe response:
+{recipe}"""
+
+
 def build_recipe_system_prompt(state: AppState) -> str:
     available = state.get("available_cookware", [])
     missing = state.get("missing_cookware", [])

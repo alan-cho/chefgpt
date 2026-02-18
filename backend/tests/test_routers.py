@@ -13,6 +13,7 @@ from graphs.graph import (
 # route_after_classify
 # ---------------------------------------------------------------------------
 
+
 def test_route_classify_not_cooking():
     state = {"is_cooking_related": False, "query_intent": None}
     assert route_after_classify(state) == "respond_not_cooking"
@@ -37,6 +38,7 @@ def test_route_classify_general():
 # route_after_assistant
 # ---------------------------------------------------------------------------
 
+
 def test_route_assistant_with_tool_calls():
     msg = AIMessage(
         content="",
@@ -56,6 +58,7 @@ def test_route_assistant_no_tool_calls():
 # route_after_generate_recipe
 # ---------------------------------------------------------------------------
 
+
 def test_route_generate_recipe_with_tool_calls():
     msg = AIMessage(
         content="",
@@ -68,12 +71,13 @@ def test_route_generate_recipe_with_tool_calls():
 def test_route_generate_recipe_no_tool_calls():
     msg = AIMessage(content="Here is your recipe.")
     state = {"messages": [msg]}
-    assert route_after_generate_recipe(state) == END
+    assert route_after_generate_recipe(state) == "validate_recipe"
 
 
 # ---------------------------------------------------------------------------
 # route_after_tools
 # ---------------------------------------------------------------------------
+
 
 def test_route_tools_recipe_request():
     state = {"query_intent": "recipe_request"}

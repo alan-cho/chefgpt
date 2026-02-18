@@ -22,7 +22,9 @@ def test_inquire_needs_clarification(mocker):
         needs_clarification=True, question=question
     )
     mocker.patch("graphs.inquire.llm", mock_llm)
-    mock_interrupt = mocker.patch("graphs.inquire.interrupt", return_value="No restrictions")
+    mock_interrupt = mocker.patch(
+        "graphs.inquire.interrupt", return_value="No restrictions"
+    )
 
     result = inquire({"query": "Make me something good"})
 

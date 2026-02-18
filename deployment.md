@@ -81,10 +81,12 @@ classify ──► respond_not_cooking
          │
          ├──► assistant ◄──► tools
          │
-         └──► inquire ──► check_cookware ──► generate_recipe ◄──► tools
+         └──► inquire ──► check_cookware ──► generate_recipe ──► validate_recipe
+                                                      ▲    │
+                                                      └────┘ (via tools)
 ```
 
-The entry point is always `classify`. From there, three paths are possible: reject non-cooking queries, send general questions to `assistant`, or route recipe-oriented queries through the longer `inquire → check_cookware → generate_recipe` pipeline.
+The entry point is always `classify`. From there, three paths are possible: reject non-cooking queries, send general questions to `assistant`, or route recipe-oriented queries through the longer `inquire → check_cookware → generate_recipe → validate_recipe` pipeline.
 
 **Trade-off:** Adding a `classify` LLM call to every request adds latency (~200–400ms). The alternative — letting the main LLM decide what to do — would reduce latency but makes routing implicit and harder to debug. Structured output on `classify` (see below) makes the routing deterministic, which is worth the extra call.
 
@@ -110,11 +112,11 @@ This is preferable to prompting the main LLM to ask a question in its response a
 
 ### Separate LLM Instances Per Node
 
-Each node that calls the LLM (`classify`, `inquire`, `check_cookware`, `assistant`, `generate_recipe`) instantiates its own `ChatAnthropic` client with specific configuration: structured output for classification nodes, tool bindings for generative nodes.
+Each node that calls the LLM (`classify`, `inquire`, `check_cookware`, `assistant`, `generate_recipe`, `validate_recipe`) instantiates its own `ChatAnthropic` client with specific configuration: structured output for classification and validation nodes, tool bindings for generative nodes.
 
 This separation is intentional. A node that classifies intent should never accidentally invoke a tool. A node that generates a recipe should never accidentally return a `ClassificationResult`. Isolating configuration per node makes each node's contract explicit and prevents unintended LLM capabilities from leaking across the graph.
 
-**Trade-off:** Five LLM instances are created at module import time instead of one. The overhead is negligible (these are thin HTTP client wrappers), and the clarity benefit is significant.
+**Trade-off:** Six LLM instances are created at module import time instead of one. The overhead is negligible (these are thin HTTP client wrappers), and the clarity benefit is significant.
 
 ---
 
@@ -125,3 +127,15 @@ The `/query` endpoint uses FastAPI's `StreamingResponse` with `media_type="text/
 **Why SSE over WebSockets?** SSE is unidirectional (server → client), which matches the streaming use case exactly. WebSockets are bidirectional and add unnecessary handshake complexity for what is effectively a request-response stream. SSE is also simpler to implement, works over standard HTTP/2, and requires no special client library.
 
 **Trade-off:** SSE connections are held open for the duration of a graph run. On Fargate, this means one connection per active user. The stateful streaming nature is one reason Lambda was ruled out — Lambda has a 15-minute execution limit and cold starts, both of which are problematic for streaming agents.
+
+---
+
+### Recipe Validation as a Dedicated Node
+
+The `validate_recipe` node sits between `generate_recipe` and the terminal state. It runs the generated recipe text through a structured-output LLM call that checks three things: safety (dangerous temperatures, harmful food combinations, allergen issues), structure (ingredients, instructions, and timing are all present), and hallucinations (implausibly large quantities or unrealistic temperatures).
+
+**Why a separate node?** Embedding validation logic inside `generate_recipe` — either as a post-processing step or as additional prompt instructions — conflates generation with quality control and makes both harder to test in isolation. A dedicated node has a single responsibility, its own LLM configuration, and can be patched independently in tests without touching the generation node.
+
+**Failure modes:** If the recipe is flagged as unsafe, the node appends a replacement `AIMessage` to the state. Because `main.py` reads `state["messages"][-1]` as the final response, the replacement is what the user receives. Structural issues (missing sections) are logged as warnings but pass through — re-generation on structure failure would require a conditional back-edge to `generate_recipe`, which adds graph complexity and latency; this is left as a future improvement.
+
+**Trade-off:** Validation adds one extra LLM round-trip after every recipe generation. At typical Claude latencies this is ~500–800ms of additional wall time. The safety benefit justifies the cost, but the node should be monitored in production (via LangSmith or CloudWatch) to confirm the false-positive rate is low enough not to degrade the user experience.
